@@ -116,7 +116,7 @@ extension DocumentReference {
             .eraseToAnyPublisher()
     }
     
-    public func publisher<D: Decodable>(includeMetadataChanges: Bool = true, as type: D.Type, documentSnapshotMapper: @escaping (DocumentSnapshot) throws -> D? = DocumentSnapshot.defaultMapper()) -> AnyPublisher<D?, Error> {
+    public func combineFirestorePublisher<D: Decodable>(includeMetadataChanges: Bool = true, as type: D.Type, documentSnapshotMapper: @escaping (DocumentSnapshot) throws -> D? = DocumentSnapshot.defaultMapper()) -> AnyPublisher<D?, Error> {
         combineFirestorePublisher(includeMetadataChanges: includeMetadataChanges)
             .map {
                 do {
