@@ -1,6 +1,0 @@
-framework module CombineFirebaseFunctions {
-  umbrella header "CombineFirebaseFunctions-umbrella.h"
-
-  export *
-  module * { export * }
-}

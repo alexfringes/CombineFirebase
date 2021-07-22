@@ -63,6 +63,7 @@ let package = Package(
             name: "CombineFirebaseDatabase",
             dependencies: [
                 .product(name: "FirebaseDatabase", package: "Firebase"),
+                .product(name: "FirebaseDatabaseSwift-Beta", package: "Firebase"),
             ],
             path: "Sources/Database"
         ),

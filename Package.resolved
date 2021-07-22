@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/google/GoogleDataTransport.git",
         "state": {
           "branch": null,
-          "revision": "cad598c0338e8b203b94378dff0d4d819fa141cf",
-          "version": "9.0.1"
+          "revision": "9e79fd8deddbef5646fbb5dbb3eaf963e338f007",
+          "version": "9.1.0"
         }
       },
       {
@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/google/GoogleUtilities.git",
         "state": {
           "branch": null,
-          "revision": "94f9ab80d39da19dd3a2492d5451e909333f0269",
-          "version": "7.4.3"
+          "revision": "beb713a16b50a4df3162b3f3ecdeffa16b74b773",
+          "version": "7.5.0"
         }
       },
       {
@@ -96,8 +96,8 @@
         "repositoryURL": "https://github.com/google/promises.git",
         "state": {
           "branch": null,
-          "revision": "afa9a1ace74e116848d4f743599ab83e584ff8cb",
-          "version": "1.2.12"
+          "revision": "611337c330350c9c1823ad6d671e7f936af5ee13",
+          "version": "2.0.0"
         }
       },
       {
