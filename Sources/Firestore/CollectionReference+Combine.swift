@@ -12,7 +12,7 @@ import FirebaseFirestoreSwift
 
 extension CollectionReference {
     
-    public func addDocument(data: [String: Any]) -> AnyPublisher<DocumentReference, Error> {
+    public func combineAddDocument(data: [String: Any]) -> AnyPublisher<DocumentReference, Error> {
         var ref: DocumentReference?
         return Future<DocumentReference, Error> { [weak self] promise in
             ref = self?.addDocument(data: data) { error in
@@ -25,7 +25,7 @@ extension CollectionReference {
         }.eraseToAnyPublisher()
     }
     
-    public func addDocument<T: Encodable>(from data: T, encoder: Firestore.Encoder = Firestore.Encoder()) -> AnyPublisher<DocumentReference, Error> {
+    public func combineAddDocument<T: Encodable>(from data: T, encoder: Firestore.Encoder = Firestore.Encoder()) -> AnyPublisher<DocumentReference, Error> {
         var ref: DocumentReference?
         return Future<DocumentReference, Error> { [weak self] promise in
             do {

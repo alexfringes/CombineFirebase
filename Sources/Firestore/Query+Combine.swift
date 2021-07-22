@@ -31,18 +31,18 @@ extension Query {
     
     }
     
-    public func publisher(includeMetadataChanges: Bool = true) -> AnyPublisher<QuerySnapshot, Error> {
+    public func combineFirestorePublisher(includeMetadataChanges: Bool = true) -> AnyPublisher<QuerySnapshot, Error> {
         Publisher(self, includeMetadataChanges: includeMetadataChanges)
             .eraseToAnyPublisher()
     }
     
-    public func publisher<D: Decodable>(includeMetadataChanges: Bool = true, as type: D.Type, documentSnapshotMapper: @escaping (DocumentSnapshot) throws -> D? = DocumentSnapshot.defaultMapper(), querySnapshotMapper: @escaping (QuerySnapshot, (DocumentSnapshot) throws -> D?) -> [D] = QuerySnapshot.defaultMapper()) -> AnyPublisher<[D], Error> {
-        publisher(includeMetadataChanges: includeMetadataChanges)
+    public func combineFirestorePublisher<D: Decodable>(includeMetadataChanges: Bool = true, as type: D.Type, documentSnapshotMapper: @escaping (DocumentSnapshot) throws -> D? = DocumentSnapshot.defaultMapper(), querySnapshotMapper: @escaping (QuerySnapshot, (DocumentSnapshot) throws -> D?) -> [D] = QuerySnapshot.defaultMapper()) -> AnyPublisher<[D], Error> {
+        combineFirestorePublisher(includeMetadataChanges: includeMetadataChanges)
             .map { querySnapshotMapper($0, documentSnapshotMapper) }
             .eraseToAnyPublisher()
     }
     
-    public func getDocuments(source: FirestoreSource = .default) -> AnyPublisher<QuerySnapshot, Error> {
+    public func combineGetDocuments(source: FirestoreSource = .default) -> AnyPublisher<QuerySnapshot, Error> {
         Future<QuerySnapshot, Error> { [weak self] promise in
             self?.getDocuments(source: source, completion: { (snapshot, error) in
                 if let error = error {
@@ -50,14 +50,14 @@ extension Query {
                 } else if let snapshot = snapshot {
                     promise(.success(snapshot))
                 } else {
-                    promise(.failure(FirestoreError.nilResultError))
+                    promise(.failure(CombineFirestoreError.nilResultError))
                 }
             })
         }.eraseToAnyPublisher()
     }
     
-    public func getDocuments<D: Decodable>(source: FirestoreSource = .default, as type: D.Type, documentSnapshotMapper: @escaping (DocumentSnapshot) throws -> D? = DocumentSnapshot.defaultMapper(), querySnapshotMapper: @escaping (QuerySnapshot, (DocumentSnapshot) throws -> D?) -> [D] = QuerySnapshot.defaultMapper()) -> AnyPublisher<[D], Error> {
-        getDocuments(source: source)
+    public func combineGetDocuments<D: Decodable>(source: FirestoreSource = .default, as type: D.Type, documentSnapshotMapper: @escaping (DocumentSnapshot) throws -> D? = DocumentSnapshot.defaultMapper(), querySnapshotMapper: @escaping (QuerySnapshot, (DocumentSnapshot) throws -> D?) -> [D] = QuerySnapshot.defaultMapper()) -> AnyPublisher<[D], Error> {
+        combineGetDocuments(source: source)
             .map { querySnapshotMapper($0, documentSnapshotMapper) }
             .eraseToAnyPublisher()
     }
@@ -74,7 +74,7 @@ extension QuerySnapshot {
                 } else if let querySnapshot = querySnapshot {
                     _ = subscriber.receive(querySnapshot)
                 } else {
-                    subscriber.receive(completion: .failure(FirestoreError.nilResultError))
+                    subscriber.receive(completion: .failure(CombineFirestoreError.nilResultError))
                 }
             }
         }

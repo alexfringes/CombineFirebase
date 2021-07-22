@@ -10,7 +10,7 @@ import Combine
 import FirebaseFirestore
 
 extension Firestore {
-    public func disableNetwork() -> AnyPublisher<Void, Error> {
+    public func combineDisableNetwork() -> AnyPublisher<Void, Error> {
         Future<Void, Error> { [weak self] promise in
             self?.disableNetwork(completion: { error in
                 guard let error = error else {
@@ -22,7 +22,7 @@ extension Firestore {
         }.eraseToAnyPublisher()
     }
     
-    public func enableNetwork() -> AnyPublisher<Void, Error> {
+    public func combineEnableNetwork() -> AnyPublisher<Void, Error> {
         Future<Void, Error> { [weak self] promise in
             self?.enableNetwork(completion: { error in
                 guard let error = error else {
@@ -34,11 +34,11 @@ extension Firestore {
         }.eraseToAnyPublisher()
     }
     
-    public func runTransction(_ updateBlock: @escaping (Transaction) throws -> Any?) -> AnyPublisher<Any?, Error> {
-        return self.runTransaction(type: Any.self, updateBlock)
+    public func combineRunTransction(_ updateBlock: @escaping (Transaction) throws -> Any?) -> AnyPublisher<Any?, Error> {
+        return self.combineRunTransaction(type: Any.self, updateBlock)
     }
     
-    public func runTransaction<T>(type: T.Type, _ updateBlock: @escaping (Transaction) throws -> T?) -> AnyPublisher<T?, Error> {
+    public func combineRunTransaction<T>(type: T.Type, _ updateBlock: @escaping (Transaction) throws -> T?) -> AnyPublisher<T?, Error> {
         Future<T?, Error> { [weak self] promise in
             self?.runTransaction({ transaction, errorPointer in
                 do {

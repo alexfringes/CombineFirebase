@@ -10,7 +10,7 @@ import Combine
 import FirebaseFirestore
 
 extension WriteBatch {
-    public func commit() -> AnyPublisher<Void, Error> {
+    public func combineCommit() -> AnyPublisher<Void, Error> {
         Future<Void, Error> { [weak self] promise in
             self?.commit { error in
                 guard let error = error else {

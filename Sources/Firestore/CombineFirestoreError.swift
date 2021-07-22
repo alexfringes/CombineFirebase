@@ -6,6 +6,6 @@
 //  Copyright © 2020 Kumar Shivang. All rights reserved.
 //
 
-enum FirestoreError: Error {
+enum CombineFirestoreError: Error {
     case nilResultError
 }

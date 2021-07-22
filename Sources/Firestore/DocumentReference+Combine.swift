@@ -12,7 +12,7 @@ import Combine
 
 extension DocumentReference {
     
-    public func setData(_ documentData: [String: Any]) -> AnyPublisher<Void, Error> {
+    public func combineSetData(_ documentData: [String: Any]) -> AnyPublisher<Void, Error> {
         Future<Void, Error> { [weak self] promise in
             self?.setData(documentData) { error in
                 guard let error = error else {
@@ -24,7 +24,7 @@ extension DocumentReference {
         }.eraseToAnyPublisher()
     }
     
-    public func setData<T: Encodable>(from data: T, encoder: Firestore.Encoder = Firestore.Encoder()) -> AnyPublisher<Void, Error> {
+    public func combineSetData<T: Encodable>(from data: T, encoder: Firestore.Encoder = Firestore.Encoder()) -> AnyPublisher<Void, Error> {
         Future<Void, Error> { [weak self] promise in
             do {
                 try self?.setData(from: data, encoder: encoder) { error in
@@ -40,7 +40,7 @@ extension DocumentReference {
         }.eraseToAnyPublisher()
     }
     
-    public func setData(_ documentData: [String: Any], merge: Bool) -> AnyPublisher<Void, Error> {
+    public func combineSetData(_ documentData: [String: Any], merge: Bool) -> AnyPublisher<Void, Error> {
         Future<Void, Error> { [weak self] promise in
             self?.setData(documentData, merge: merge) { error in
                 guard let error = error else {
@@ -52,7 +52,7 @@ extension DocumentReference {
         }.eraseToAnyPublisher()
     }
     
-    public func setData<T: Encodable>(from data: T, merge: Bool, encoder: Firestore.Encoder = Firestore.Encoder()) -> AnyPublisher<Void, Error> {
+    public func combineSetData<T: Encodable>(from data: T, merge: Bool, encoder: Firestore.Encoder = Firestore.Encoder()) -> AnyPublisher<Void, Error> {
         Future<Void, Error> { [weak self] promise in
             do {
                 try self?.setData(from: data, merge: merge, encoder: encoder) { error in
@@ -68,7 +68,7 @@ extension DocumentReference {
         }.eraseToAnyPublisher()
     }
     
-    public func updateData(_ fields: [AnyHashable: Any]) -> AnyPublisher<Void, Error> {
+    public func combineUpdateData(_ fields: [AnyHashable: Any]) -> AnyPublisher<Void, Error> {
         Future<Void, Error> { [weak self] promise in
             self?.updateData(fields) { error in
                 guard let error = error else {
@@ -80,7 +80,7 @@ extension DocumentReference {
         }.eraseToAnyPublisher()
     }
     
-    public func delete() -> AnyPublisher<Void, Error> {
+    public func combineDelete() -> AnyPublisher<Void, Error> {
         Future<Void, Error> { [weak self] promise in
             self?.delete() { error in
                 guard let error = error else {
@@ -111,13 +111,13 @@ extension DocumentReference {
         }
     }
     
-    public func publisher(includeMetadataChanges : Bool = true) -> AnyPublisher<DocumentSnapshot, Error> {
+    public func combineFirestorePublisher(includeMetadataChanges : Bool = true) -> AnyPublisher<DocumentSnapshot, Error> {
         Publisher(self, includeMetadataChanges: includeMetadataChanges)
             .eraseToAnyPublisher()
     }
     
     public func publisher<D: Decodable>(includeMetadataChanges: Bool = true, as type: D.Type, documentSnapshotMapper: @escaping (DocumentSnapshot) throws -> D? = DocumentSnapshot.defaultMapper()) -> AnyPublisher<D?, Error> {
-        publisher(includeMetadataChanges: includeMetadataChanges)
+        combineFirestorePublisher(includeMetadataChanges: includeMetadataChanges)
             .map {
                 do {
                     return try documentSnapshotMapper($0)
@@ -129,7 +129,7 @@ extension DocumentReference {
             .eraseToAnyPublisher()
     }
     
-    public func getDocument(source: FirestoreSource = .default) -> AnyPublisher<DocumentSnapshot, Error> {
+    public func combineGetDocument(source: FirestoreSource = .default) -> AnyPublisher<DocumentSnapshot, Error> {
         Future<DocumentSnapshot, Error> { [weak self] promise in
             self?.getDocument(source: source, completion: { (snapshot, error) in
                 if let error = error {
@@ -137,14 +137,14 @@ extension DocumentReference {
                 } else if let snapshot = snapshot {
                     promise(.success(snapshot))
                 } else {
-                    promise(.failure(FirestoreError.nilResultError))
+                    promise(.failure(CombineFirestoreError.nilResultError))
                 }
             })
         }.eraseToAnyPublisher()
     }
     
-    public func getDocument<D: Decodable>(source: FirestoreSource = .default, as type: D.Type, documentSnapshotMapper: @escaping (DocumentSnapshot) throws -> D? = DocumentSnapshot.defaultMapper()) -> AnyPublisher<D?, Error> {
-        getDocument(source: source).map {
+    public func combineGetDocument<D: Decodable>(source: FirestoreSource = .default, as type: D.Type, documentSnapshotMapper: @escaping (DocumentSnapshot) throws -> D? = DocumentSnapshot.defaultMapper()) -> AnyPublisher<D?, Error> {
+        combineGetDocument(source: source).map {
             do {
                 return try documentSnapshotMapper($0)
             } catch {
@@ -155,16 +155,16 @@ extension DocumentReference {
         .eraseToAnyPublisher()
     }
     
-    public var cacheFirstGetDocument: AnyPublisher<DocumentSnapshot, Error> {
-        getDocument(source: .cache)
+    public var combineCacheFirstGetDocument: AnyPublisher<DocumentSnapshot, Error> {
+        combineGetDocument(source: .cache)
             .catch { (error) -> AnyPublisher<DocumentSnapshot, Error> in
                 print("error loading from cache for path \(self.path): \(error)")
-                return self.getDocument(source: .server)
+                return self.combineGetDocument(source: .server)
         }.eraseToAnyPublisher()
     }
     
-    public func cacheFirstGetDocument<D: Decodable>(as type: D.Type, documentSnapshotMapper: @escaping (DocumentSnapshot) throws -> D? = DocumentSnapshot.defaultMapper()) -> AnyPublisher<D?, Error> {
-        cacheFirstGetDocument.map {
+    public func combineCacheFirstGetDocument<D: Decodable>(as type: D.Type, documentSnapshotMapper: @escaping (DocumentSnapshot) throws -> D? = DocumentSnapshot.defaultMapper()) -> AnyPublisher<D?, Error> {
+        combineCacheFirstGetDocument.map {
             do {
                 return try documentSnapshotMapper($0)
             } catch {
@@ -187,7 +187,7 @@ extension DocumentSnapshot {
                 } else if let snapshot = snapshot {
                     _ = subscriber.receive(snapshot)
                 } else {
-                    subscriber.receive(completion: .failure(FirestoreError.nilResultError))
+                    subscriber.receive(completion: .failure(CombineFirestoreError.nilResultError))
                 }
             }
         }
